@@ -2,6 +2,7 @@
 #如果目录下有多个文件，可以进行选择。
 
 import os
+import sys
 import csv
 from unittest import result
 import numpy as np
@@ -18,11 +19,10 @@ set_excel_file = "taxreport.xlsx"
 def csvtoxlsx(self):
     csv = pd.read_csv(self,encoding='utf-8')
     csv.to_excel(set_excel_file,sheet_name='Sheet1')
+#获得当前的工作目录
+filePath = sys.path[0]
 
-
-
-
-filePath = r"C:\Users\yuki\Desktop\tools\LGGST"
+#filePath = r"C:\Users\yuki\Desktop\tools\LGGST"
 os.chdir(filePath)
 print("文件夹的地址")
 print(filePath)
@@ -56,10 +56,14 @@ print(taxreport)
 #把生成的数据透视表写入到csv.csv.excel
 today = str(datetime.date.today())
 path = filePath+"\\"+today+".xlsx"
-result_sum=pd.DataFrame(taxreport.sum()).T
+print(taxreport.sum())
+result_sum=pd.DataFrame(taxreport.sum())
+#加T有调整调换transpose
+#result_sum=pd.DataFrame(taxreport.sum()).T 
+
 result_pivot_sum=taxreport.append(result_sum)
-result_pivot_sum=result_pivot_sum.rename(index={0:u'sum total'})
-result_pivot_sum.to_excel(path)
+print(result_pivot_sum)
+result_sum.to_excel(path)
 
 
 print("具体报告请查看",path)

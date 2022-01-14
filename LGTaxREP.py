@@ -4,6 +4,7 @@
 import os
 import sys
 import csv
+import turtle
 from unittest import result
 import numpy as np
 import pandas as pd
@@ -43,7 +44,14 @@ for csv_file in filecsv:
     num1 += 1
     flist = str(num1)+"."+csv_file
     print(flist)
-choosefile = input("请选择：")
+
+while True:
+    choosefile = input("请选择：")
+    if int(choosefile) >= num1 :
+       print("错误选择,请重选")
+    choosefile = input("请选择：")
+
+print("你的选择是",choosefile)
 cclist = int(choosefile)-1
 ccsv_file = filecsv[cclist]
 excelfile = csvtoxlsx(ccsv_file)

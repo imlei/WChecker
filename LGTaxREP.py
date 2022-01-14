@@ -20,6 +20,22 @@ set_excel_file = "taxreport.xlsx"
 def csvtoxlsx(self):
     csv = pd.read_csv(self,encoding='utf-8')
     csv.to_excel(set_excel_file,sheet_name='Sheet1')
+
+#生成判断函数
+def judgeinput(selectone, limitl):
+    selectl = int(selectone)
+    if selectl == 0:
+        msgji = 0
+        return msgji
+    elif selectl > limitl:
+        msgji = 1
+        return msgji
+    elif selectl <= limitl:
+        msgji = 2
+        return msgji
+
+        
+
 #获得当前的工作目录
 filePath = sys.path[0]
 
@@ -44,12 +60,22 @@ for csv_file in filecsv:
     num1 += 1
     flist = str(num1)+"."+csv_file
     print(flist)
-
+#判断文件选择
 while True:
     choosefile = input("请选择：")
-    if int(choosefile) >= num1 :
-       print("错误选择,请重选")
-    choosefile = input("请选择：")
+    chooseoption = judgeinput(choosefile,num1)
+    print(chooseoption)
+
+    if chooseoption == 0:
+        print("谢谢，退出")
+        quit()
+    if chooseoption == 2:
+        break
+
+    else:
+        continue
+    
+    
 
 print("你的选择是",choosefile)
 cclist = int(choosefile)-1

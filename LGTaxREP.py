@@ -29,14 +29,12 @@ print(filePath)
 print("开始遍历")
 filecsv = []
 for root, dirs, files in os.walk(filePath):
-   print(root)
-   print(dirs)
-   print(files)
+
    #cvs to excel,取得文件名
    for file in files:
        if file.endswith(".csv"):
            filecsv.append(file)
-   print(filecsv)
+
 #遍历文件，并且选择想要生成的数据。
 print("你想选择哪一个文件")
 num1 = 0
@@ -57,13 +55,11 @@ print("您选择的文件是",ccsv_file)
 print(taxreport)
 #把生成的数据透视表写入到csv.csv.excel
 today = str(datetime.date.today())
-
-
 path = filePath+"\\"+today+".xlsx"
-#result_sum=pd.DataFrame(taxreport.sum()).T
-#result_pivot_sum=taxreport.append(result_sum)
-#result_pivot_sum=result_pivot_sum.rename(index={0:u'sum total'})
-#result_pivot_sum.to_excel(path)
+result_sum=pd.DataFrame(taxreport.sum()).T
+result_pivot_sum=taxreport.append(result_sum)
+result_pivot_sum=result_pivot_sum.rename(index={0:u'sum total'})
+result_pivot_sum.to_excel(path)
 
 
 print("具体报告请查看",path)

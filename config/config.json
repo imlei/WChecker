@@ -1,8 +1,8 @@
 {
-    "APIKey":"KJH882IC78AZT7F2BV6PRXR9W1R7NBBE1N",
+    "APIKey":"freekey",
     "WalletAddress":[
-        {"Name":"Metablox","Address":"0x0B62A3b873BcC7EaCEBa72da6BdcBc428e7b539d"},
-        {"Name":"BoundaryPay","Address":"0x8be04479ac34cc8b77af0e3d528c50a1f11a1d70"},
+        {"Name":"Metasolu","Address":"0x0B62A3b873BdcBc428e7b539d"},
+        {"Name":"Leitalk.com","Address":"0x8be0448c50a1f11a1d70"},
         {"Name":"NA","Address":""},
         {"Name":"NA","Address":""},
         {"Name":"NA","Address":""}

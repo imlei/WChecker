@@ -1,11 +1,8 @@
 {
     "APIKey":"freekey",
-    "WalletAddress":[
-        {"Name":"Metasolu","Address":"0x0B62A3b873BdcBc428e7b539d"},
-        {"Name":"Leitalk.com","Address":"0x8be0448c50a1f11a1d70"},
-        {"Name":"NA","Address":""},
-        {"Name":"NA","Address":""},
-        {"Name":"NA","Address":""}
-    ]
-
+        "hostname":"127.0.0.1",
+        "port":3306,
+        "user":"test",
+        "password":"password",
+        "database":"test"
 }

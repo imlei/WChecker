@@ -6,6 +6,8 @@ import time
 import os
 from openpyxl import load_workbook
 import pandas as pd
+import urllib.request
+import json
 path=sys.path[0]
 #转换时间戳
 def tse(timeStamp):
@@ -13,6 +15,12 @@ def tse(timeStamp):
     timeArray = time.localtime(now)
     timedata = time.strftime("%Y-%m-%d",timeArray)
     return timedata
+
+#运行爬虫，抓取数据
+def urldb(tws):
+    res=urllib.request.urlopen(tws)
+    reader = json.loads(res.read())
+    return reader
 #对数据进行整理
 def wdataSort(walletinfo):
     wdata = []

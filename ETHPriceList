@@ -1,0 +1,64 @@
+from module1 import urldb,tse
+from db_conn import dbCon
+import time
+import datetime
+#获得ETH的历史价格
+#时间比较,如果数据库里面没有数据，则读取1000条历史数据。
+def dateDiff():
+    sql1="SELECT date FROM ETHPrice where uid=(select max(uid) from ETHPrice);"
+    res = dbCon(sql1)
+    today=str(datetime.date.today())
+    if len(res) !=0:
+        date_1=time.strftime(str(res[0][0]))
+        date1=datetime.datetime.strptime(date_1,"%Y-%m-%d")
+        date2=datetime.datetime.strptime(today,"%Y-%m-%d")
+        date_Diff = (date2 - date1).days
+    else:
+        date_Diff=1000
+    return(date_Diff)
+#获取时间信息    
+def dc():
+    dcsql="SELECT `Date` FROM `ETHPrice` WHERE 1; "
+    dCheck=dbCon(dcsql)
+
+    return dCheck
+
+dChecks=dc()
+print(type(dChecks))
+for dCheck in dChecks:
+    print(dCheck[0])
+showme=dChecks
+print(showme)
+#获取基本数据
+dLimit=dateDiff()
+#判断日期，如果当天是2022-09-21，而最新的数据是2022-09-20，相差是1天，当天数据并没有出来，所以不需要更新。
+
+if dLimit <= 1:
+    print("已经是最新的数据了，不需要更新")
+    #exit()
+else:
+    url="https://min-api.cryptocompare.com/data/v2/histoday?fsym=ETH&tsym=USD&limit="+str(dLimit)
+url="https://min-api.cryptocompare.com/data/v2/histoday?fsym=ETH&tsym=USD&limit=5"
+#抓取数据
+results = urldb(url)
+#提取需要的数据
+results2=results["Data"]["Data"]
+
+for result in results2:
+    price_date = tse(int(result["time"]))
+    price_high = result["high"]
+    price_low = result["low"]
+    price_open = result["open"]
+    price_close = result["close"]
+
+    #通过比较，如果数据已经存在，则不再写入。
+    sqlcount="SELECT COUNT(*) FROM ETHPrice WHERE DATE(Date)='%s'"%price_date
+    resout=dbCon(sqlcount)
+    if resout[0][0] == 1:
+        print("this number exited.")
+        exit()
+    else:
+        sel = "INSERT INTO ETHPrice (uid, `date`, high, low, open, close) VALUES (NULL, '%s', '%s', '%s', '%s', '%s');"%(price_date,price_high,price_low,price_open,price_close)
+        print(sel)
+        dbCon(sel)
+print("数据写入完成")

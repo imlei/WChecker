@@ -1,0 +1,41 @@
+import pymysql
+import sys
+import json
+    #读取配置文件
+
+path=sys.path[0]
+config_file= path+'./config/config.json'
+with open(config_file, 'r') as fc_file:
+    wconfig = json.load(fc_file)
+#进行数据库连接
+    dhost=wconfig["hostname"]
+    duser=wconfig["user"]
+    dport=wconfig["port"]
+    dpassword=wconfig["password"]
+    ddatabase=wconfig["database"]
+
+def dbCon(sql):
+
+
+    db=pymysql.connect(host=dhost,port=dport,user=duser,password=dpassword,database=ddatabase)
+    cursor=db.cursor()
+    cursor.execute(sql)
+    if sql.startswith('SELECT'):
+    #    res=cursor.fetchone()
+        res=cursor.fetchall()
+    else:
+        db.commit()
+        res = 88
+    cursor.close()
+    db.close()
+    return res
+
+
+def WalletID():
+    sql="SELECT * FROM walletlist WHERE wid;"
+    db = pymysql.connect(host=dhost,port=dport,user=duser,password=dpassword,database=ddatabase)
+    cursor=db.cursor()
+    cursor.execute(sql)
+    res=cursor.fetchall()
+    db.close
+    return res

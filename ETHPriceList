@@ -22,43 +22,87 @@ def dc():
     dCheck=dbCon(dcsql)
 
     return dCheck
-
+'''
 dChecks=dc()
 print(type(dChecks))
 for dCheck in dChecks:
     print(dCheck[0])
 showme=dChecks
 print(showme)
+'''
+
+def read_price():
 #获取基本数据
-dLimit=dateDiff()
-#判断日期，如果当天是2022-09-21，而最新的数据是2022-09-20，相差是1天，当天数据并没有出来，所以不需要更新。
+    dLimit=dateDiff()
+    #判断日期，如果当天是2022-09-21，而最新的数据是2022-09-20，相差是1天，当天数据并没有出来，所以不需要更新。
 
-if dLimit <= 1:
-    print("已经是最新的数据了，不需要更新")
-    #exit()
-else:
-    url="https://min-api.cryptocompare.com/data/v2/histoday?fsym=ETH&tsym=USD&limit="+str(dLimit)
-url="https://min-api.cryptocompare.com/data/v2/histoday?fsym=ETH&tsym=USD&limit=5"
-#抓取数据
-results = urldb(url)
-#提取需要的数据
-results2=results["Data"]["Data"]
-
-for result in results2:
-    price_date = tse(int(result["time"]))
-    price_high = result["high"]
-    price_low = result["low"]
-    price_open = result["open"]
-    price_close = result["close"]
-
-    #通过比较，如果数据已经存在，则不再写入。
-    sqlcount="SELECT COUNT(*) FROM ETHPrice WHERE DATE(Date)='%s'"%price_date
-    resout=dbCon(sqlcount)
-    if resout[0][0] == 1:
-        print("this number exited.")
+    if dLimit <= 1:
+        print("已经是最新的数据了，不需要更新")
         exit()
     else:
-        sel = "INSERT INTO ETHPrice (uid, `date`, high, low, open, close) VALUES (NULL, '%s', '%s', '%s', '%s', '%s');"%(price_date,price_high,price_low,price_open,price_close)
-        print(sel)
-        dbCon(sel)
-print("数据写入完成")
+        url="https://min-api.cryptocompare.com/data/v2/histoday?fsym=ETH&tsym=USD&limit="+str(dLimit)
+
+    #抓取数据
+    results = urldb(url)
+    #提取需要的数据
+    results2=results["Data"]["Data"]
+
+    for result in results2:
+        price_date = tse(int(result["time"]))
+        price_high = result["high"]
+        price_low = result["low"]
+        price_open = result["open"]
+        price_close = result["close"]
+
+        #通过比较，如果数据已经存在，则不再写入。
+        sqlcount="SELECT COUNT(*) FROM ETHPrice WHERE DATE(Date)='%s'"%price_date
+        resout=dbCon(sqlcount)
+        if resout[0][0] == 1:
+            price_res="数据已经存在"
+        else:
+            sel = "INSERT INTO ETHPrice (uid, `date`, high, low, open, close) VALUES (NULL, '%s', '%s', '%s', '%s', '%s');"%(price_date,price_high,price_low,price_open,price_close)
+            
+            dbCon(sel)
+            price_res='数据写入完成'
+    print("数据写入完成")
+    return(price_res)
+
+
+def ndsearch(time_enter):
+    time_enter_format=time_enter.split("-")
+    new_enter_time_format=str(time_enter_format[0])+"-"+str(time_enter_format[1])+"-"+str(time_enter_format[2]+" 23:59:59")
+    new_time_format=time.strptime(new_enter_time_format,"%Y-%m-%d %H:%M:%S")
+    time_enter_timestamp_mk = time.mktime(new_time_format)
+    time_enter_timestamp=int(time_enter_timestamp_mk)
+    url="https://min-api.cryptocompare.com/data/v2/histoday?fsym=ETH&tsym=USD&limit=1&toTs="+str(time_enter_timestamp)
+    return url
+
+def checkprice(date_selected):
+    sql_check="SELECT ISNULL((SELECT date FROM ETHPrice WHERE DATE(Date)='%s'))"%date_selected
+    res = dbCon(sql_check)
+    if res[0][0] == 0:
+        sql = "SELECT close FROM ETHPrice WHERE DATE(Date)='%s'"%date_selected
+        res_price = dbCon(sql)
+        res_price_info=res_price[0][0]
+        #print(res_price_info)
+        #print(date_selected+"的价格是%"+str(res_price_info))
+    else :
+        print("正在查询信息")
+        new_url=ndsearch(date_selected)
+            #抓取数据
+        results = urldb(new_url)
+        #提取需要的数据
+        results2=results["Data"]["Data"]
+        sql = ""
+        for result in results2:
+            price_date = tse(int(result["time"]))
+            price_high = result["high"]
+            price_low = result["low"]
+            price_open = result["open"]
+            price_close = result["close"]
+            sel = "INSERT INTO ETHPrice (uid, `date`, high, low, open, close) VALUES (NULL, '%s', '%s', '%s', '%s', '%s');"%(price_date,price_high,price_low,price_open,price_close)
+            dbCon(sel)
+        res_price_info = results2[0]['close']
+        #print(results2[0]['close'])
+        #print(date_selected+"的价格是%"+str(results2[0]['close']))
+    return res_price_info
